@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:16-alpine
+    hostname: insurlink-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: pg
+      POSTGRES_PASSWORD: insurlink_password
+      POSTGRES_DB: insurlink
