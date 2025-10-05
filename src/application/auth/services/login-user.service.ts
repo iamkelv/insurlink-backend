@@ -21,7 +21,6 @@ export class LoginUserService {
     }
 
     const token = await this.jwtTokenService.signEncrypted({ sub: user.id, email: user.email, role: user.role });
-    const { password, ...safeUser } = user as any;
-    return { user: safeUser, token };
+    return { token };
   }
 }
