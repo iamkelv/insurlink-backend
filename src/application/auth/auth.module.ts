@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { RegisterUserService } from './services/register-user.service';
 import { LoginUserService } from './services/login-user.service';
+import { RefreshTokenService } from './services/refresh-token.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from '../users/entities/user.entity';
 import { InfrastructureModule } from '../../infrastructure/infrastructure.module';
@@ -15,6 +16,6 @@ import { InfrastructureModule } from '../../infrastructure/infrastructure.module
     InfrastructureModule,
   ],
   controllers: [AuthController],
-  providers: [RegisterUserService, LoginUserService, JwtStrategy],
+  providers: [RegisterUserService, LoginUserService, RefreshTokenService, JwtStrategy],
 })
 export class AuthModule {}

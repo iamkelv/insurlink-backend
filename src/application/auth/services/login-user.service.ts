@@ -20,7 +20,13 @@ export class LoginUserService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = await this.jwtTokenService.signEncrypted({ sub: user.id, email: user.email, role: user.role });
-    return { token };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = await this.jwtTokenService.signEncrypted(payload);
+    const refreshToken = await this.jwtTokenService.signRefreshToken(payload);
+
+    user.refreshToken = refreshToken;
+    await this.userRepository.save(user);
+
+    return { token, refreshToken };
   }
 }
