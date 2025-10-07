@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { EncryptionService } from './encryption.service';
 import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
@@ -8,10 +9,17 @@ export class JwtTokenService {
   constructor(
     private readonly jwt: JwtService,
     private readonly encryption: EncryptionService,
+    private readonly config: ConfigService,
   ) {}
 
   async signEncrypted(payload: JwtPayload): Promise<string> {
     const jwt = await this.jwt.signAsync(payload);
+    return this.encryption.encrypt(jwt);
+  }
+
+  async signRefreshToken(payload: JwtPayload): Promise<string> {
+    const expiresIn = this.config.get<string>('JWT_REFRESH_EXPIRATION') || '7d';
+    const jwt = await this.jwt.signAsync(payload, { expiresIn });
     return this.encryption.encrypt(jwt);
   }
 

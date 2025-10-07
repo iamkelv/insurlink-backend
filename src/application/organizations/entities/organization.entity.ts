@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { KybStatus } from '@common/enums/user-type.enum';
-import { User } from '../../users/entities/user.entity';
+import { OrganizationMember } from './organization-member.entity';
 
 @Entity('organizations')
 export class Organization {
@@ -13,10 +13,10 @@ export class Organization {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column()
   phone: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   address: string;
 
   @Column({ nullable: true })
@@ -34,8 +34,8 @@ export class Organization {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToMany(() => User, (user) => user.organization)
-  users: User[];
+  @OneToMany(() => OrganizationMember, (member) => member.organization)
+  members: OrganizationMember[];
 
   @CreateDateColumn()
   createdAt: Date;

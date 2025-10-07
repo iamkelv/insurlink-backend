@@ -1,21 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Organization } from '../entities/organization.entity';
-import { User } from '../../users/entities/user.entity';
+import { OrganizationMember } from '../entities/organization-member.entity';
+import { OrganizationRole } from '@common/enums/user-type.enum';
 
 @Injectable()
 export class DeleteOrganizationService {
   constructor(
     @InjectRepository(Organization)
     private readonly orgRepository: Repository<Organization>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(OrganizationMember)
+    private readonly memberRepository: Repository<OrganizationMember>,
   ) {}
 
   async execute(userId: string) {
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['organization'] });
-    if (!user?.organization) throw new NotFoundException('Organization not found');
-    await this.orgRepository.remove(user.organization);
+    const membership = await this.memberRepository.findOne({
+      where: { userId },
+      relations: ['organization'],
+    });
+
+    if (!membership) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    if (membership.role !== OrganizationRole.OWNER) {
+      throw new ForbiddenException('Only owners can delete organization');
+    }
+
+    await this.orgRepository.remove(membership.organization);
   }
 }

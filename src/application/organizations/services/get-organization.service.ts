@@ -1,21 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { OrganizationMember } from '../entities/organization-member.entity';
 
 @Injectable()
 export class GetOrganizationService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(OrganizationMember)
+    private readonly memberRepository: Repository<OrganizationMember>,
   ) {}
 
   async execute(userId: string) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
+    const memberships = await this.memberRepository.find({
+      where: { userId },
       relations: ['organization'],
     });
-    if (!user?.organization) throw new NotFoundException('Organization not found');
-    return user.organization;
+
+    if (!memberships.length) {
+      throw new NotFoundException('No organizations found');
+    }
+
+    return memberships.map((m) => ({
+      ...m.organization,
+      role: m.role,
+      status: m.status,
+      joinedAt: m.joinedAt,
+    }));
   }
 }

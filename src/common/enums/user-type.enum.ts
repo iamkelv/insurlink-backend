@@ -22,3 +22,15 @@ export enum KybStatus {
   REJECTED = 'REJECTED',
 }
 
+export enum OrganizationRole {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER',
+}
+
+export enum MemberStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  PENDING = 'PENDING',
+}
+

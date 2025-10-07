@@ -2,6 +2,7 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import multipart from '@fastify/multipart';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -9,6 +10,12 @@ async function bootstrap() {
     new FastifyAdapter()
   );
   
+  await app.register(multipart as any, {
+    limits: {
+      fileSize: 5 * 1024 * 1024,
+    },
+  });
+
   app.setGlobalPrefix('api');
   app.enableCors({ origin: '*' });
   app.useGlobalPipes(

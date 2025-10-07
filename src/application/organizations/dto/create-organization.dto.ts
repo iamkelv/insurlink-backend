@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
 
 export class CreateOrganizationDto {
   @IsString()
@@ -9,17 +9,15 @@ export class CreateOrganizationDto {
   description?: string;
 
   @IsString()
-  @IsOptional()
   @IsEmail()
-  email?: string;
+  email: string;
 
   @IsString()
-  @IsOptional()
-  phone?: string;
+  @IsPhoneNumber()
+  phone: string;
 
   @IsString()
-  @IsOptional()
-  address?: string;
+  address: string;
 
   @IsString()
   @IsOptional()

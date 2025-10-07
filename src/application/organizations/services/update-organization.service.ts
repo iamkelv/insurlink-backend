@@ -1,23 +1,35 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Organization } from '../entities/organization.entity';
-import { User } from '../../users/entities/user.entity';
+import { OrganizationMember } from '../entities/organization-member.entity';
 import { UpdateOrganizationDto } from '../dto/update-organization.dto';
+import { OrganizationRole } from '@common/enums/user-type.enum';
 
 @Injectable()
 export class UpdateOrganizationService {
   constructor(
     @InjectRepository(Organization)
     private readonly orgRepository: Repository<Organization>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(OrganizationMember)
+    private readonly memberRepository: Repository<OrganizationMember>,
   ) {}
 
   async execute(userId: string, dto: UpdateOrganizationDto) {
-    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['organization'] });
-    if (!user?.organization) throw new NotFoundException('Organization not found');
-    Object.assign(user.organization, dto);
-    return this.orgRepository.save(user.organization);
+    const membership = await this.memberRepository.findOne({
+      where: { userId },
+      relations: ['organization'],
+    });
+
+    if (!membership) {
+      throw new NotFoundException('Organization not found');
+    }
+
+    if (![OrganizationRole.OWNER, OrganizationRole.ADMIN].includes(membership.role)) {
+      throw new ForbiddenException('Only owners and admins can update organization');
+    }
+
+    Object.assign(membership.organization, dto);
+    return this.orgRepository.save(membership.organization);
   }
 }
