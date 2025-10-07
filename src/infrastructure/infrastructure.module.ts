@@ -3,6 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { EncryptionService } from './services/encryption.service';
 import { JwtTokenService } from './services/jwt-token.service';
+import { R2StorageService } from './services/r2-storage.service';
+import { EmailService } from './services/email.service';
 import { ConfigModule } from './config/config.module';
 
 @Module({
@@ -16,7 +18,7 @@ import { ConfigModule } from './config/config.module';
       }),
     }),
   ],
-  providers: [EncryptionService, JwtTokenService],
-  exports: [EncryptionService, JwtTokenService, JwtModule, ConfigModule],
+  providers: [EncryptionService, JwtTokenService, R2StorageService, EmailService],
+  exports: [EncryptionService, JwtTokenService, R2StorageService, EmailService, JwtModule, ConfigModule],
 })
 export class InfrastructureModule {}
