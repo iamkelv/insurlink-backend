@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { KycStatus, Role } from '@common/enums/user-type.enum';
-import { Organization } from '../../organizations/entities/organization.entity';
+import { OrganizationMember } from '../../organizations/entities/organization-member.entity';
 
 @Entity('users')
 export class User {
@@ -32,11 +32,10 @@ export class User {
   avatar: string;
 
   @Column({ nullable: true })
-  organizationId: string;
+  refreshToken: string;
 
-  @ManyToOne(() => Organization, { nullable: true })
-  @JoinColumn({ name: 'organizationId' })
-  organization: Organization;
+  @OneToMany(() => OrganizationMember, (member) => member.user)
+  organizationMemberships: OrganizationMember[];
 
   @CreateDateColumn()
   createdAt: Date;
