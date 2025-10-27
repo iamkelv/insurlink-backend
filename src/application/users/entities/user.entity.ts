@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { KycStatus, Role } from '@common/enums/user-type.enum';
 import { OrganizationMember } from '../../organizations/entities/organization-member.entity';
+import { Ticket } from '../../support/entities/ticket.entity';
 
 @Entity('users')
 export class User {
@@ -36,6 +37,11 @@ export class User {
 
   @OneToMany(() => OrganizationMember, (member) => member.user)
   organizationMemberships: OrganizationMember[];
+
+  
+  @OneToMany(() => Ticket, (ticket) => ticket.user)
+  tickets: Ticket[];
+
 
   @CreateDateColumn()
   createdAt: Date;
